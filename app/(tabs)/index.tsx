@@ -1,58 +1,68 @@
-import React, { useRef, useEffect } from 'react'
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Text, View } from '@/components/Themed';
-import MapView, { PROVIDER_GOOGLE, AnimatedRegion, Animated } from 'react-native-maps';
-import { useNavigation } from 'expo-router';
-
-
-const INITAL_REGION = {
-  latitude: 31.17,
-  longitude: 34.43,
-  latitudeDelta: 5,
-  longitudeDelta: 5 
-}
-
-
-const LLBS = {
-  latitude: 31.1712,
-  longitude: 34.4327,
-  latitudeDelta: 100,
-  longitudeDelta: 100 
-}
-
+import React, { useState } from 'react'
+import { StyleSheet } from 'react-native';
+import { View } from '@/components/Themed';
+import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from 'react-native-maps';
+import { StatusBar } from 'expo-status-bar'
+import WAY_POINTS from '../../constants/pointsOfInterest'
+import INITIAL_REGION from '../../constants/initialRegion'
 
 
 export default function App() {
 
-  const mapRef = useRef<MapView>()
-  const navigation = useNavigation()
-
-  useEffect(()=> {
-    navigation.setOptions({
-      headerRight: ()=> (
-        <TouchableOpacity onPress={focusMap}>
-          <View style={{ justifyContent: 'center', paddingLeft: 20 }}>
-            <Text>
-              Focus
-            </Text>
-          </View>
-        </TouchableOpacity>
-      ),
-    })
-  }, [])
-
-  const focusMap =()=> {
-    mapRef.current?.animateCamera({ center: LLBS, zoom: 10 }, { duration: 3000 })
+  const logRegions =(region: any)=> {
+      console.log(region)
   }
- 
+
+  const customMarkerIcon = require('../../assets/icons/triangle.png')
+
+  const showLocationsOfInterest =()=> {
+    return WAY_POINTS.map((item, index) => {
+      return (
+        <Marker key={index} 
+                    coordinate={item.location} 
+                    title={item.title}
+                    description={item.description}
+                    pinColor='red'
+                    //image={customMarkerIcon}
+                    //style={styles.customMarker}
+                    />
+      )
+    })
+  }
+
+  const renderMagentaLines =()=> {
+    const coordinates = WAY_POINTS.map((item) => item.location)
+    return <Polyline coordinates={coordinates} strokeColor='magenta' strokeWidth={5}/>
+  }
+
+  const darkMode =()=> {
+    let [on, off] = useState(0)
+  }
+
   return (
     <View style={styles.container}>
-      <MapView style={StyleSheet.absoluteFill} 
+          
+      <MapView onRegionChange={logRegions}
+                    style={StyleSheet.absoluteFill} 
                     provider={ PROVIDER_GOOGLE } 
-                    initialRegion={ INITAL_REGION } 
+                    initialRegion={ INITIAL_REGION }
                     showsUserLocation 
                     showsMyLocationButton
-                    ref={ mapRef }/>
+                    customMapStyle={[{ 
+                      featureType: 'road', 
+                      elementType: 'geometry', 
+                      stylers: [{ 
+                        color: 'brown',
+                        invert_lightness: false  // darkMode in future use
+                      }]}]}
+                    >
+
+   
+      {renderMagentaLines()}
+      {showLocationsOfInterest()}
+      </MapView>
+
+      <StatusBar style='auto'/>
     </View>
   );
 }
@@ -76,5 +86,9 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '100%',
+  },
+  customMarker: {
+    width: 40,
+    height: 40
   }
-});
+})
