@@ -5,7 +5,7 @@ const WAY_POINTS = [
           latitude:  31.2865,
           longitude: 34.72334,
           },
-          description: "LLBS: 122.500, KEDEM: 118.350, VOR: 114.3"
+          description: "LLBS: 122.500\nKEDEM: 118.350\nVOR: 114.3"
      },
      {
           title: "TZFON HA IR",
@@ -14,7 +14,7 @@ const WAY_POINTS = [
           longitude: 34.7913,
           },
           description: 
-          "ALT: 3000\nHDG: 106\nT road split below"
+          "ALT: 3000\nHDG: 106\nT road split below\nexpect HAGAV DAROM on 122.550"
      }, 
      {
           title: "OMER",

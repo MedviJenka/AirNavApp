@@ -1,43 +1,63 @@
 import React, { useState } from 'react'
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { View } from '@/components/Themed';
-import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Marker, Polyline, Callout } from 'react-native-maps';
 import { StatusBar } from 'expo-status-bar'
 import WAY_POINTS from '../../constants/pointsOfInterest'
 import INITIAL_REGION from '../../constants/initialRegion'
+import * as Location from 'expo-location'
 
 
 export default function App() {
+
+  const [selectedWayPoints, setSelectedWayPoints] = useState([])
+  const [_, setCount] = useState(0)
+
+  const toggleWayPoints =(waypoint: never)=> {
+    if (selectedWayPoints.length <= 5) {
+      setSelectedWayPoints([...selectedWayPoints, waypoint]) 
+    } else {
+      setSelectedWayPoints([waypoint])
+      setCount((count) => count + 1)
+    }
+  }
+
+
+  const showLocationsOfInterest =()=> {
+    return WAY_POINTS.map((item, index) => {
+      return (
+        <TouchableOpacity>
+          
+          <Marker key={index} 
+                      coordinate={item.location} 
+                      title={item.title}
+                      description={item.description}
+                      pinColor={selectedWayPoints.includes(item) ? 'blue' : 'red'}
+                      onPress={() => toggleWayPoints(item)}
+                      //image={customMarkerIcon}
+                      //style={styles.customMarker}
+                      />
+      </TouchableOpacity>
+      )
+    })
+  }
+
+  const renderMagentaLines = () => {
+    if (selectedWayPoints.length >= 2) {
+      const coordinates = selectedWayPoints.map((item) => item.location);
+      return <Polyline coordinates={coordinates} strokeColor='magenta' strokeWidth={5} />;
+    }
+    return null;
+  };
+
+  const customMarkerIcon = require('../../assets/icons/triangle.png')
+
+
 
   const logRegions =(region: any)=> {
       console.log(region)
   }
 
-  const customMarkerIcon = require('../../assets/icons/triangle.png')
-
-  const showLocationsOfInterest =()=> {
-    return WAY_POINTS.map((item, index) => {
-      return (
-        <Marker key={index} 
-                    coordinate={item.location} 
-                    title={item.title}
-                    description={item.description}
-                    pinColor='red'
-                    //image={customMarkerIcon}
-                    //style={styles.customMarker}
-                    />
-      )
-    })
-  }
-
-  const renderMagentaLines =()=> {
-    const coordinates = WAY_POINTS.map((item) => item.location)
-    return <Polyline coordinates={coordinates} strokeColor='magenta' strokeWidth={5}/>
-  }
-
-  const darkMode =()=> {
-    let [on, off] = useState(0)
-  }
 
   return (
     <View style={styles.container}>
@@ -48,20 +68,35 @@ export default function App() {
                     initialRegion={ INITIAL_REGION }
                     showsUserLocation 
                     showsMyLocationButton
-                    customMapStyle={[{ 
-                      featureType: 'road', 
-                      elementType: 'geometry', 
-                      stylers: [{ 
-                        color: 'brown',
-                        invert_lightness: false  // darkMode in future use
-                      }]}]}
-                    >
-
-   
+                    customMapStyle={[
+                      {
+                        stylers: [{ 
+                          color: 'brown',
+                          //invert_lightness: false  // darkMode in future use
+                          }]
+                      },
+                      {
+                        featureType: 'poi',
+                        elementType: 'all',
+                        stylers: [{ visibility: 'off' }],
+                      },
+                      {
+                        featureType: 'poi.business',
+                        elementType: 'all',
+                        stylers: [{ visibility: 'off' }],
+                      },
+                      {
+                        featureType: 'transit',
+                        elementType: 'all',
+                        stylers: [{ visibility: 'off' }],
+                      }     
+                    ]}
+                  >
+    
       {renderMagentaLines()}
       {showLocationsOfInterest()}
+      
       </MapView>
-
       <StatusBar style='auto'/>
     </View>
   );
