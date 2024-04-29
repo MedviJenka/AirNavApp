@@ -5,6 +5,9 @@ import { StatusBar } from 'expo-status-bar'
 import WAY_POINTS from '@/constants/pointsOfInterest'
 import AIRPORTS from '@/constants/airports'
 import INITIAL_REGION from '@/constants/initialRegion'
+import displayWayPoints from '@/components/displayWayPoints';
+import { Stack } from 'expo-router'
+import VOR from '@/components/displayVOR';
 
 
 export default function App() {
@@ -47,13 +50,12 @@ export default function App() {
     }     
   ]
 
-
   const showWayPoints =()=> {
 
     return WAY_POINTS.map((item, index: any) => {
       return (
+    
         <TouchableOpacity onPress={()=> setCount((count) => count + 1)}>
-  
           <Marker key={index} 
                       coordinate={item.location} 
                       description={item.description}        
@@ -62,7 +64,7 @@ export default function App() {
                       //image={customMarkerIcon}
                       //style={styles.customMarker}
                       >
-              <View style={styles.wayPoints}>
+              <View style={styles.wayPoints}>      
                 <Text style={ styles.wayPointsText }>
                   {item.title}
                 </Text>
@@ -70,6 +72,7 @@ export default function App() {
               <View style={styles.iconsCenter}>
                 <Image source={require('@/assets/icons/triangle.png')} style={styles.wayPointsIconSize}/>    
               </View>
+              
             </Marker>
       </TouchableOpacity>
       )
@@ -121,14 +124,14 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }}/>
       <MapView onRegionChange={logRegions}
                     style={StyleSheet.absoluteFill} 
                     provider={ PROVIDER_GOOGLE } 
                     initialRegion={ INITIAL_REGION }
                     showsUserLocation 
                     showsMyLocationButton
-                    customMapStyle={customMapStyles}
-                  >
+                    customMapStyle={customMapStyles}>
     
       {renderMagentaLines()}
       {showAirports()}
@@ -167,16 +170,17 @@ const styles = StyleSheet.create({
     height: 40
   },
   wayPoints: {
-    width: 'auto',
+    width: 66,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
-    padding: 1,
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 20,
   },
   wayPointsText: {
+    //position: 'absolute',
+    justifyContent: 'center',
     fontWeight: 'bold',
     fontSize: 18,
   },

@@ -11,7 +11,7 @@ type wayPointsType = {
 const WAY_POINTS: wayPointsType = [
 
      {
-          title: "TZFON HA IR",
+          title: "TZFON HA-IR",
           location: {
           latitude:  31.2875,
           longitude: 34.7913,
