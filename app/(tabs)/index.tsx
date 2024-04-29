@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Image, Linking } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline, Callout } from 'react-native-maps';
 import { StatusBar } from 'expo-status-bar'
 import WAY_POINTS from '@/constants/pointsOfInterest'
@@ -33,99 +33,71 @@ export default function App() {
     {
       featureType: 'poi',
       elementType: 'all',
-      stylers: [{ visibility: 'off' }],
+      stylers: [{ visibility: 'on' }],
     },
     {
       featureType: 'poi.business',
       elementType: 'all',
-      stylers: [{ visibility: 'off' }],
+      stylers: [{ visibility: 'on' }],
     },
     {
       featureType: 'transit',
       elementType: 'all',
-      stylers: [{ visibility: 'off' }],
+      stylers: [{ visibility: 'on' }],
     }     
   ]
 
 
+  const showWayPoints =()=> {
 
-  const showAirports =()=> {
-    return AIRPORTS.map((item: any, index: any) => {
+    return WAY_POINTS.map((item, index: any) => {
       return (
         <TouchableOpacity onPress={()=> setCount((count) => count + 1)}>
-          
+  
           <Marker key={index} 
                       coordinate={item.location} 
-                      title={item.title}
-                      description={item.description}
+                      description={item.description}        
                       pinColor={selectedWayPoints.includes(item) ? 'blue' : 'red'}
                       onPress={() => toggleWayPoints(item)}
                       //image={customMarkerIcon}
                       //style={styles.customMarker}
-                      />
-        <View style={styles.wayPoints}>
-                                               
-          <Text style={ styles.wayPointsText }>
-            {item.title}
-          </Text>
-  
-        </View>
-        <View>
-          <Image source={require('@/assets/icons/airport.png')} style={{ width: 40, height: 40 }}/>
-        </View>
+                      >
+              <View style={styles.wayPoints}>
+                <Text style={ styles.wayPointsText }>
+                  {item.title}
+                </Text>
+              </View>
+              <View style={styles.iconsCenter}>
+                <Image source={require('@/assets/icons/triangle.png')} style={styles.wayPointsIconSize}/>    
+              </View>
+            </Marker>
       </TouchableOpacity>
       )
-    })
+    }) 
   }
 
-  const displayWayPointsAndAirports = (pointsOfInterest: any, imageName: string) => {
-    return pointsOfInterest.map((item: any, index: any) => {
-      return (
-        <TouchableOpacity onPress={() => setCount((count) => count + 1)} key={index}>
-          <Marker
-            coordinate={item.location}
-            description={item.description}
-            pinColor={selectedWayPoints.includes(item) ? 'blue' : 'red'}
-            onPress={() => toggleWayPoints(item)}
-          >
-            <View style={styles.wayPoints}>
-              <Text style={styles.wayPointsText}>
-                {item.title}
-              </Text>
-            </View>
-            <View>
-              {/* Use the imagePath parameter as the source for the Image component */}
-       
-            </View>
-          </Marker>
-        </TouchableOpacity>
-      )
-    })
-  }
 
-  const showWayPoints =()=> {
-    return WAY_POINTS.map((item, index: any) => {
+  const showAirports =()=> {
+    return AIRPORTS.map((item, index: any) => {
       return (
         <TouchableOpacity onPress={()=> setCount((count) => count + 1)}>
-          
+  
           <Marker key={index} 
                       coordinate={item.location} 
-                      description={item.description}
+                      description={item.description}        
                       pinColor={selectedWayPoints.includes(item) ? 'blue' : 'red'}
                       onPress={() => toggleWayPoints(item)}
                       //image={customMarkerIcon}
                       //style={styles.customMarker}
                       >
 
-                        <View style={styles.wayPoints}>
-                                               
+                        <View style={styles.wayPoints}>      
                           <Text style={ styles.wayPointsText }>
                             {item.title}
                           </Text>
-                   
                         </View>
-                        <View>
-                          <Image source={require('@/assets/icons/triangle.png')} style={{ width: 40, height: 40 }}/>
+                        <View style={styles.iconsCenter}>
+                        <Image source={require('@/assets/icons/airport.png')} style={styles.airportsIconSize}/>    
                         </View>
             </Marker>
       </TouchableOpacity>
@@ -195,15 +167,29 @@ const styles = StyleSheet.create({
     height: 40
   },
   wayPoints: {
-     backgroundColor: 'white',
-     padding: 0,
-     borderWidth: 1,
-     borderColor: 'gray',
-     borderRadius: 20,
+    width: 'auto',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 1,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 20,
   },
   wayPointsText: {
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 18,
+  },
+  airportsIconSize: {
+    width: 60,
+    height: 60,
+  },
+  wayPointsIconSize: {
+    width: 50,
+    height: 50,
+  },
+  iconsCenter: {
+    justifyContent: 'center'
   }
 
 })
